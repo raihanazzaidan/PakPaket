@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from ..models import User, Customer, Kurir
 
-def login(request):
+def loginView(request):
     if request.user.is_authenticated:
-        return redirect('')  # Redirect ke halaman utama jika sudah login
+        return redirect('index')  # Redirect ke halaman utama jika sudah login
     
     if request.method == 'POST':
         username_input = request.POST.get('username')
@@ -15,27 +16,22 @@ def login(request):
 
         if user is not None:
             login(request, user)
-            messages.success(request, f'Selamat datang, {user.username}!')
             
             if user.role == 'ADMIN':
-                return redirect('admin:index')
+                return redirect('index')
             elif user.role == 'KURIR':
                 return redirect('list_gudang')
             elif user.role == 'CUSTOMER':
-                return redirect('home')
+                return redirect('index')
         else:
             messages.error(request, 'Username atau password salah. Silakan coba lagi.')
             return render(request, 'tracking/auth/login.html', {'username_value': username_input})
     return render(request, 'tracking/auth/login.html')
 
-def logout(request):
-    logout(request)
-    messages.info(request, 'Anda telah berhasil logout.')
-    return redirect('login')
 
 def customerRegister(request):
     if request.user.is_authenticated:
-        return redirect('home')
+        return redirect('index')
     
     if request.method == 'POST':
         username_input = request.POST.get('username')
@@ -72,3 +68,38 @@ def customerRegister(request):
             messages.error(request, f'Terjadi kesalahan saat registrasi: {str(e)}')
             return render(request, 'tracking/auth/register.html', {'form_data': request.POST})
     return render(request, 'tracking/auth/register.html')
+
+@login_required(login_url='login')
+def logoutView(request):
+    logout(request)
+    messages.info(request, 'Anda telah berhasil logout.')
+    return redirect('login')
+
+def adminRegister(request):
+    if request.user.username != 'superadmin':
+        messages.error(request, 'Akses ditolak! Hanya superadmin yang dapat membuat akun admin baru.')
+        return redirect('index')
+    
+    if request.method == 'POST':
+        username_input = request.POST.get('username')
+        email_input = request.POST.get('email')
+        password_input = request.POST.get('password')
+
+        if User.objects.filter(username=username_input).exists():
+            messages.error(request, 'Username sudah digunakan. Gunakan username lain.')
+            return render(request, 'tracking/auth/adminRegister.html', {'form_data': request.POST})
+        
+        try:
+            user = User.objects.create_user(
+                username=username_input,
+                email=email_input,
+                password=password_input,
+                role='ADMIN'
+            )
+
+            messages.success(request, 'Registrasi berhasil! Silakan login.')
+            return redirect('login')
+        except Exception as e:
+            messages.error(request, f'Terjadi kesalahan saat registrasi: {str(e)}')
+            return render(request, 'tracking/auth/adminRegister.html', {'form_data': request.POST})
+    return render(request, 'tracking/auth/adminRegister.html')
