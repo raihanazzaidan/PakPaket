@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
+import random
+import string
 
 # Blok User
 class User(AbstractUser):
@@ -77,7 +79,39 @@ class Paket(models.Model):
     kurir = models.ForeignKey(Kurir, on_delete=models.SET_NULL, null=True, blank=True, related_name='paket_kurir', verbose_name="Kurir")
     transitGudang = models.ForeignKey(Gudang, on_delete=models.SET_NULL, null=True, blank=True, related_name='paket_gudang', verbose_name="Transit Gudang")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Tanggal Dibuat")
+    resi = models.CharField(max_length=20, unique=True, blank=True, verbose_name="Nomor Resi")
 
+    def save(self, *args, **kwargs):
+        if not self.resi:
+            
+            kota_input = self.kotaPenerima.upper().strip()
+            
+            kode_kota_map = {
+                'JAKARTA': 'JKT',
+                'SURABAYA': 'SBY',
+                'MALANG': 'MLG',
+                'BANDUNG': 'BDG',
+                'SEMARANG': 'SMG',
+                'YOGYAKARTA': 'JOG',
+                'MEDAN': 'KNO',
+                'MAKASSAR': 'UPG',
+                'BALI': 'DPS',
+            }
+
+            kode_kota = kode_kota_map.get(kota_input)
+            if not kode_kota:
+                kota_bersih = kota_input.replace(" ", "")
+                kode_kota = kota_bersih[:3] if len(kota_bersih) >= 3 else kota_bersih.ljust(3, 'X')
+
+            # 3. Generate Nomor Unik (Contoh: 8 karakter kombinasi angka dan huruf besar)
+            # Hasilnya akan seperti: 'A4F89K2P'
+            kode_unik = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+
+            # 4. Gabungkan menjadi nomor resi utuh
+            self.resi = f"{kode_kota}-{kode_unik}"
+            
+        # Panggil fungsi save() asli milik Django untuk menyimpan ke database
+        super().save(*args, **kwargs)
     def __str__(self):
         return f"{self.id} - {self.status}"
     

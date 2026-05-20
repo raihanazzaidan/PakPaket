@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PakPaket | Kirim Paket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen py-12">
+
+<div class="flex items-center justify-center px-4">
+    <div class="w-full max-w-3xl">
+        
+        <div class="mb-6 flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-emerald-600">📦 Buat Kiriman Baru</h1>
+                <p class="text-gray-500 text-sm mt-1">Isi detail paket dan alamat penerima dengan lengkap</p>
+            </div>
+            <a href="{% url 'cek_resi_publik' %}" class="text-sm font-medium text-gray-500 bg-white border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 transition shadow-sm">
+                Batal
+            </a>
+        </div>
+
+        <form method="POST" action="{% url 'kirim_paket' %}" class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 space-y-8">
+            {% csrf_token %}
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="{% if message.tags == 'error' %}bg-red-50 text-red-600 border-red-200{% else %}bg-emerald-50 text-emerald-600 border-emerald-200{% endif %} border text-sm p-4 rounded-lg flex justify-between items-center">
+                        <span>{{ message }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div>
+                <h2 class="text-sm font-bold text-emerald-600 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">1. Detail Paket</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    
+                    <div class="md:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Isi Paket (Deskripsi)</label>
+                        <input type="text" name="deskripsi" placeholder="Contoh: Pakaian, Dokumen, Elektronik" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition" required />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Berat (Kg)</label>
+                        <input type="number" step="0.1" name="berat" placeholder="Contoh: 1.5" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition" required />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Dimensi Total (cm)</label>
+                        <input type="number" name="dimensi" placeholder="P + L + T" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition" required />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tipe Layanan</label>
+                        <select name="tipeLayanan" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white" required>
+                            <option value="" disabled selected>Pilih Layanan...</option>
+                            {% for layanan in daftar_layanan %}
+                                <option value="{{ layanan.id }}">
+                                    {{ layanan.namaLayanan }} - Rp {{ layanan.hargaPerKg|floatformat:0 }}/kg
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-sm font-bold text-emerald-600 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">2. Data Penerima</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap Penerima</label>
+                        <input type="text" name="penerima" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition" required />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nomor Handphone (Aktif)</label>
+                        <input type="text" name="noHpPenerima" placeholder="Contoh: 081234567890" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition" required />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Kota Tujuan</label>
+                        <input type="text" name="kotaPenerima" placeholder="Contoh: Jakarta, Surabaya" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition" required />
+                        <p class="text-xs text-gray-400 mt-1">*Resi akan otomatis menyesuaikan kota tujuan.</p>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Alamat Lengkap</label>
+                        <textarea name="alamatPenerima" rows="3" placeholder="Nama Jalan, RT/RW, Kelurahan, Kecamatan, Patokan..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition" required></textarea>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" class="w-full bg-emerald-600 text-white py-3.5 rounded-xl font-bold text-lg hover:bg-emerald-700 transition shadow-md cursor-pointer flex justify-center items-center gap-2">
+                    Kirim Paket Sekarang
+                </button>
+                <p class="text-center text-xs text-gray-400 mt-3">Ongkos kirim akan dikalkulasikan secara otomatis berdasarkan berat dan tipe layanan.</p>
+            </div>
+
+        </form>
+        
+    </div>
+</div>
+
+</body>
+</html>
