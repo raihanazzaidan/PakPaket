@@ -1,5 +1,4 @@
 from urllib import request
-
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required

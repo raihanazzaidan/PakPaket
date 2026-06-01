@@ -52,9 +52,6 @@
         
         <div class="mt-8 text-sm text-hijau-tua">
             <p class="font-medium mb-4 pr-4">Kirim paket lebih cepat dan aman bersama<br><span class="font-bold">PakPaket</span></p>
-            <!-- <button class="bg-gray-200/70 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-full font-medium transition w-full shadow-sm mb-6 border border-white/50">
-                Kirim Sekarang
-            </button> -->
             <a href="{% url 'logout' %}" onclick="return confirm('Yakin ingin keluar dari sistem?');" class="flex items-center space-x-2 font-bold hover:text-red-600 transition cursor-pointer">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i><span>Logout</span>
             </a>
@@ -254,15 +251,13 @@
                             {% endif %}
                             
                             <div>
-                                <p class="text-sm font-semibold text-blue-600 mb-0.5">Paket #{{ aktivitas.resi }}</p>
+                                <p class="text-sm font-semibold text-blue-600 mb-0.5">Paket #{{ aktivitas.paket.resi }}</p>
+                                
                                 <p class="text-xs text-gray-700">
-                                    {% if aktivitas.status == 'DITERIMA' %}Berhasil diterima di {{ aktivitas.kotaPenerima }}
-                                    {% elif aktivitas.status == 'DIKIRIM' %}Sedang dalam perjalanan ke {{ aktivitas.kotaPenerima }}
-                                    {% elif aktivitas.status == 'DIKEMBALIKAN' %}Paket sedang dalam proses pengembalian
-                                    {% else %}Status paket diperbarui
-                                    {% endif %}
+                                    <span class="font-semibold text-gray-800">{{ aktivitas.lokasi }}</span> &bull; {{ aktivitas.notes }}
                                 </p>
-                                <p class="text-[10px] text-gray-400 mt-0.5">{{ aktivitas.created_at|date:"d M Y, H:i" }}</p>
+                                
+                                <p class="text-[10px] text-gray-400 mt-0.5">{{ aktivitas.timestamp|date:"d M Y, H:i" }}</p>
                             </div>
                         </div>
                         {% empty %}
@@ -287,28 +282,22 @@
             document.getElementById('sidebar').classList.toggle('sidebar-tutup');
         }
 
-        // Ambil Data Chart Utama
         const labelsChart = document.getElementById('labelsData') ? JSON.parse(document.getElementById('labelsData').textContent) : [];
         const dataDikirim = document.getElementById('dataDikirim') ? JSON.parse(document.getElementById('dataDikirim').textContent) : [];
         const dataDiterima = document.getElementById('dataDiterima') ? JSON.parse(document.getElementById('dataDiterima').textContent) : [];
         const dataDikembalikan = document.getElementById('dataDikembalikan') ? JSON.parse(document.getElementById('dataDikembalikan').textContent) : [];
         
-        // Ambil Data Mini Charts
         const dataWaktu = document.getElementById('dataWaktu') ? JSON.parse(document.getElementById('dataWaktu').textContent) : [];
         const dataKeberhasilan = document.getElementById('dataKeberhasilan') ? JSON.parse(document.getElementById('dataKeberhasilan').textContent) : [];
 
-        // Perhitungan Data Doughnut Chart secara lokal
-        const hitungTotal = Number("{{ paket_dikirim|default:0 }}"); // Mengambil nilai count() total objek
+        const hitungTotal = Number("{{ paket_dikirim|default:0 }}");
         const hitungDiterima = Number("{{ paket_diterima|default:0 }}");
         const hitungDikembalikan = Number("{{ paket_dikembalikan|default:0 }}");
         
-        // Logika Pengurangan: Mencari porsi murni paket yang sedang berstatus 'DIKIRIM'
         const hitungDikirimMurni = hitungTotal - hitungDiterima - hitungDikembalikan;
         
-        // Cetak angka total ke tengah Donut Chart
         document.getElementById('donutTotal').innerText = hitungTotal;
 
-        // 1. Line Chart Utama
         new Chart(document.getElementById('lineChart').getContext('2d'), {
             type: 'line',
             data: {

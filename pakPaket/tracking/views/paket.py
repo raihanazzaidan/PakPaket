@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from ..models import Paket, TrackingHistory, TipeLayanan
 from django.db.models import Q
+from django.utils import timezone
 
 def cekResi(request):
     resi = request.GET.get('resi')
@@ -87,7 +88,7 @@ def getAllPaket(request):
     if request.user.role == 'KURIR':
         if hasattr(request.user, 'kurir_profile'):
             profil_kurir = request.user.kurir_profile
-            paket_list = Paket.objects.filter(
+            paket_list = Paket.objects.select_related('tipeLayanan').filter(
                 Q(status='DIKEMAS') | Q(status='DIKIRIM', kurir=profil_kurir)
             ).order_by('created_at')
         else:
@@ -95,12 +96,12 @@ def getAllPaket(request):
             
     elif request.user.role == 'CUSTOMER':
         if hasattr(request.user, 'customer_profile'):
-            paket_list = Paket.objects.filter(pengirim=request.user.customer_profile).order_by('-created_at')
+            paket_list = Paket.objects.select_related('tipeLayanan').filter(pengirim=request.user.customer_profile).order_by('-created_at')
         else:
             paket_list = Paket.objects.none()
             
     elif request.user.role == 'ADMIN':
-        paket_list = Paket.objects.all().order_by('-created_at')
+        paket_list = Paket.objects.select_related('tipeLayanan').all().order_by('-created_at')
     else:
         paket_list = Paket.objects.none()
 
@@ -135,9 +136,7 @@ def antarPaket(request, paket_id):
 
 
 @login_required(login_url='login')
-def terimaPaket(request, paket_id):
-    """Fungsi agar Kurir mengonfirmasi paket telah sampai ke pelanggan"""
-    
+def terimaPaket(request, paket_id):    
     if request.user.role != 'KURIR' or not hasattr(request.user, 'kurir_profile'):
         messages.error(request, "Akses ditolak!")
         return redirect('all_paket')
