@@ -144,5 +144,3 @@ Proyek ini memiliki 3 alur penggunaan, yakni sebagai customer, kurir, dan admin
 
 3. **Kurir**
    * <img width="1916" height="951" alt="Screenshot 2026-06-03 at 02-51-04 PakPaket List Paket" src="https://github.com/user-attachments/assets/3e2448a2-1f46-41ef-947f-5dc43f489492" />
-   * 
-   * 
