@@ -4,6 +4,8 @@ pakPaket adalah sebuah aplikasi web sistem manajemen logistik dan pelacakan (*tr
 
 Proyek ini dikembangkan sebagai pemenuhan Tugas Akhir Mata Kuliah Pemrograman Berorientasi Objek (PBO) di Program Studi Teknik Informatika, Universitas Negeri Surabaya.
 
+---
+
 ## ✨ Fitur Utama
 
 * **Multi-Role Authentication:** Sistem *login* dan *register* kustom yang membedakan hak akses dan *dashboard* untuk Admin, Kurir, dan Pelanggan.
@@ -14,7 +16,7 @@ Proyek ini dikembangkan sebagai pemenuhan Tugas Akhir Mata Kuliah Pemrograman Be
 
 ## 🛠️ Teknologi yang Digunakan
 
-* **Backend:** Django Framework
+* **Backend:** Django Framework (Python)
 * **Frontend:** HTML5, Tailwind CSS
 * **Database:** MySQL
 * **Paradigma Utama:** Object-Oriented Programming (OOP)
@@ -23,65 +25,108 @@ Proyek ini dikembangkan sebagai pemenuhan Tugas Akhir Mata Kuliah Pemrograman Be
 
 ## 🎯 Implementasi Konsep OOP (PBO)
 
-Proyek ini dibangun dengan menerapkan 4 pilar utama Object-Oriented Programming yang melekat pada arsitektur bawaan Django ORM (Object-Relational Mapping):
+Proyek ini dibangun dengan menerapkan 4 konsep utama Object-Oriented Programming yang melekat pada arsitektur bawaan Django ORM (*Object-Relational Mapping*):
 
-### 1. Inheritance (Pewarisan)
-Pewarisan digunakan secara ekstensif dalam pembentukan entitas *database*.
-* *Class* `User` mewarisi seluruh kemampuan autentikasi (*login*, *hashing*, dll) dari *class* induk `AbstractUser` milik Django.
-* *Class* `Paket`, `Kurir`, `Customer`, dan lainnya mewarisi *behavior* dari `models.Model`, yang memberikan mereka kemampuan bawaan untuk berinteraksi dengan database (seperti `.save()`, `.delete()`).
+1. **Inheritance (Pewarisan)**
+   Pewarisan digunakan secara ekstensif dalam pembentukan entitas *database*.
+   * *Class* `User` mewarisi seluruh kemampuan autentikasi (*login*, *hashing*, dll) dari *class* induk `AbstractUser` milik Django.
+   * *Class* `Paket`, `Kurir`, `Customer`, dan lainnya mewarisi *behavior* dari `models.Model`, yang memberikan mereka kemampuan bawaan untuk berinteraksi dengan database (seperti `.save()`, `.delete()`).
 
-### 2. Encapsulation (Enkapsulasi)
-Enkapsulasi diterapkan dengan menyembunyikan proses bisnis yang kompleks dari jangkauan eksternal (*Controller/Views*).
-* **Contoh:** Logika *generate* nomor resi unik (penggabungan kode kota dan angka *random*) disembunyikan di dalam *method* pada *class* `Paket`. *Controller* hanya bertugas memberikan perintah `paket.save()`, sedangkan proses rumitnya dibungkus aman di dalam *model*.
+2. **Encapsulation (Enkapsulasi)**
+   Enkapsulasi diterapkan dengan menyembunyikan proses bisnis yang kompleks dari jangkauan eksternal (*Controller/Views*).
+   * **Contoh:** Logika *generate* nomor resi unik (penggabungan kode kota dan angka *random*) disembunyikan di dalam *method* pada *class* `Paket`. *Controller* hanya bertugas memberikan perintah `paket.save()`, sedangkan proses rumitnya dibungkus aman di dalam *model*.
 
-### 3. Abstraction (Abstraksi)
-Abstraksi digunakan untuk menyembunyikan kompleksitas eksekusi tingkat rendah (seperti *query* SQL murni) menjadi antarmuka objek yang mudah dibaca.
-* **Contoh:** Penggunaan antarmuka `Paket.objects.create(...)` atau `User.objects.filter(...)` untuk memanipulasi *database* tanpa perlu menulis perintah SQL secara manual.
+3. **Abstraction (Abstraksi)**
+   Abstraksi digunakan untuk menyembunyikan kompleksitas eksekusi tingkat rendah (seperti *query* SQL murni) menjadi antarmuka objek yang mudah dibaca.
+   * **Contoh:** Penggunaan antarmuka `Paket.objects.create(...)` atau `User.objects.filter(...)` untuk memanipulasi *database* tanpa perlu menulis perintah SQL secara manual.
 
-### 4. Polymorphism (Polimorfisme)
-Polimorfisme diimplementasikan melalui teknik *Method Overriding*.
-* **Contoh:** Menimpa (*override*) fungsi bawaan `save()` pada *class* `Paket`. Fungsi `save()` kini memiliki bentuk/perilaku baru: sebelum melakukan penyimpanan standar ke *database* (`super().save()`), ia juga akan mengeksekusi logika pencetakan nomor resi otomatis jika paket tersebut baru dibuat.
+4. **Polymorphism (Polimorfisme)**
+   Polimorfisme diimplementasikan melalui teknik *Method Overriding*.
+   * **Contoh:** Menimpa (*override*) fungsi bawaan `save()` pada *class* `Paket`. Fungsi `save()` kini memiliki bentuk/perilaku baru: sebelum melakukan penyimpanan standar ke *database* (`super().save()`), ia juga akan mengeksekusi logika pencetakan nomor resi otomatis jika paket tersebut baru dibuat.
 
 ---
 
 ## 🚀 Cara Menjalankan Proyek Secara Lokal
 
-1. **Clone repositori ini:**
-   ```bash
-   git clone https://github.com/raihanazzaidan/final-pbo
-   cd final-pbo
-2. **Buat venv di dalam folder final-pbo**
-   ```bash
-   python -m venv nama_env
-3. **Aktifkan venv**
-   ```bash
-   #Mac/Linux:
-   source nama_env/bin/activate
-   #Windows:
-   .\nama_env\Scripts\activate
-4. **Install requirements.txt**
-   ```bash
-   pip install -r requirements.txt
-5. **Migrasi ke Database**
-   Buka file pakPaket/settings.py dan pada bagian DATABASES ganti username dan passwordnya sesuai username dan password kamu dan buat database kosong bernama "pakPaket",
-   kemudian ketik command ini di terminal
-   ```bash
-   python manage.py makemigrations
-   python manage.py migrate
-6. **Buat superuser**
-   Ketik command ini di terminal dan ikuti instruksinya (gunakan username: superadmin)
-   ```bash
-   python manage.py createsuperuser
-   #kemudian ikuti instruksinya
-7. **Tambahkan User dengan Role Admin**
-   Jalankan server, buka 127.0.0.1:8000/login kemudian login dengan superadmin, dan buka 127.0.0.1:8000/adm/register
-   ```bash
-   python manage.py runserver
-8. **Tambahkan Gudang, Tipe Layanan, Kurir**
-   Login sebagai Admin untuk akses menu tambah gudang, tambah tipe layanan, dan tambah kurir
-9. **Daftar sebagai Customer**
-   Kembali ke menu Login kemudian klik "Daftar Sekarang"
-10. **Kirim Paket**
-   Login sebagai Customer untuk akses menu kirim paket
-11. **Antar Paket**
-   Login sebagai Kurir (ditambahkan oleh admin) untuk mengantar paket yang sudah dibuat oleh customer
+Ikuti langkah-langkah di bawah ini untuk menjalankan aplikasi pakPaket:
+
+**1. Clone repositori**
+```bash
+git clone https://github.com/raihanazzaidan/final-pbo
+cd final-pbo
+
+```
+
+**2. Buat Virtual Environment (venv)**
+
+```bash
+python -m venv env
+
+```
+
+**3. Aktifkan venv**
+
+* Untuk Mac/Linux:
+```bash
+source env/bin/activate
+
+```
+
+
+* Untuk Windows:
+```bash
+.\env\Scripts\activate
+
+```
+
+
+
+**4. Install Dependencies**
+
+```bash
+pip install -r requirements.txt
+
+```
+
+**5. Konfigurasi Database**
+
+* Buka file `pakPaket/settings.py`.
+* Pada bagian `DATABASES`, sesuaikan `USER` dan `PASSWORD` dengan konfigurasi MySQL milikmu.
+* Buat database baru (kosong) di MySQL dengan nama `pakPaket`.
+* Lakukan migrasi database dengan menjalankan perintah berikut:
+```bash
+python manage.py makemigrations
+python manage.py migrate
+
+```
+
+
+
+**6. Buat Akun Superuser**
+Ketik perintah di bawah ini dan ikuti instruksi yang muncul di terminal (disarankan menggunakan username: `superadmin`):
+
+```bash
+python manage.py createsuperuser
+
+```
+
+**7. Jalankan Server & Tambah Akun Admin**
+
+```bash
+python manage.py runserver
+
+```
+
+* Buka browser dan akses `http://127.0.0.1:8000/login`.
+* Login menggunakan akun `superadmin` yang baru saja dibuat.
+* Akses url `http://127.0.0.1:8000/adm/register` untuk mendaftarkan User baru dengan *role* **Admin**.
+
+**8. Setup Data Master**
+
+* Login sebagai **Admin** yang baru saja didaftarkan.
+* Tambahkan data **Gudang**, **Tipe Layanan**, dan daftarkan akun **Kurir** melalui menu yang tersedia di Dashboard Admin.
+
+**9. Skenario Penggunaan**
+
+* **Customer:** Kembali ke halaman Login, klik "Daftar Sekarang" untuk membuat akun pelanggan, lalu login untuk mulai mengirim paket.
+* **Kurir:** Login menggunakan akun kurir (yang telah dibuat oleh Admin) untuk melihat daftar paket dan memperbarui status pelacakan paket.
