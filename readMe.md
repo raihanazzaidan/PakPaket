@@ -15,7 +15,7 @@ Proyek ini dikembangkan sebagai pemenuhan Tugas Akhir Mata Kuliah Pemrograman Be
 ## ✨ Fitur Utama
 
 * **Multi-Role Authentication:** Sistem *login* dan *register* kustom yang membedakan hak akses dan *dashboard* untuk Admin, Kurir, dan Pelanggan.
-* **Smart Resi Generator:** Pembuatan nomor resi secara otomatis (contoh: `SBY-A4F89K2P`) berdasarkan kota tujuan pengiriman saat paket didaftarkan.
+* **Smart Resi Generator:** Pembuatan nomor resi secara otomatis (contoh: `MLG-A4F89K2P`) berdasarkan kota tujuan pengiriman saat paket didaftarkan.
 * **Kalkulator Ongkir:** Penghitungan otomatis ongkos kirim berdasarkan berat fisik dan harga tipe layanan/kg.
 * **Real-time Tracking Timeline:** Pelacakan riwayat perjalanan paket dengan visualisasi *timeline* yang responsif.
 * **Kurir Task Management:** Kurir dapat mengambil (*pick-up*) paket yang siap dikirim, menyelesaikan pesanan (konfirmasi penerimaan), maupun mengembalikan pesanan (retur paket).
@@ -28,7 +28,7 @@ Proyek ini dikembangkan sebagai pemenuhan Tugas Akhir Mata Kuliah Pemrograman Be
 
 ---
 
-## 🎯 Implementasi 4 Konsep PBO
+## 🎯 Implementasi 4 Konsep PBO pada Projek
 
 Proyek ini dirancang dengan arsitektur yang sangat berpegang teguh pada prinsip PBO murni, yang diwujudkan secara tegas di dalam struktur *Model* data:
 
